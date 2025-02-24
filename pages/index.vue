@@ -54,10 +54,9 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios'
 import type { UnsplashPhoto } from '~/types'
+const { getRandomPhotos } = useUnsplashApi()
 
-const config = useRuntimeConfig()
 const photos = ref<UnsplashPhoto[]>([])
 const searchQuery = ref('')
 const isLoading = ref(false)
@@ -70,27 +69,7 @@ const fetchPhotos = async (query?: string) => {
   isLoading.value = true
 
   try {
-    const response = await axios.get('https://api.unsplash.com/photos/random', {
-      params: {
-        count: 15,
-        query: query || undefined,
-        client_id: config.public.unsplashAccessKey,
-      },
-    })
-    photos.value = response.data.map((photo: UnsplashPhoto) => ({
-      id: photo.id,
-      urls: {
-        raw: photo.urls.raw,
-        full: photo.urls.full,
-        regular: photo.urls.regular,
-        small: photo.urls.small,
-        thumb: photo.urls.thumb,
-      },
-      user: {
-        name: photo.user.name,
-        location: photo.user.location || '',
-      },
-    }))
+    photos.value = await getRandomPhotos({ query })
   } catch (error) {
     console.error('Error fetching photos:', error)
   } finally {
