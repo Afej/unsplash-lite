@@ -5,30 +5,30 @@
     :class="{ 'modal-show': show }"
     @click.self="emit('close')">
     <div class="modal-content" ref="imageContainerRef">
-      <button class="close-button" @click="emit('close')">&times;</button>
-      <button
-        class="nav-button prev"
-        @click="previousImage"
-        :disabled="currentIndex === 0">
-        &#10094;
-      </button>
-      <button
-        class="nav-button next"
-        @click="nextImage"
-        :disabled="currentIndex === photos.length - 1">
-        &#10095;
-      </button>
       <div class="image-container">
         <img
-          :src="photos[currentIndex].urls.full"
+          :src="photos[currentIndex].urls.regular"
           :alt="photos[currentIndex].user.name" />
-
-        <div class="image-info">
-          <h2>{{ photos[currentIndex].user.name }}</h2>
-          <p>{{ photos[currentIndex].user.location }}</p>
-        </div>
+      </div>
+      <div class="image-info">
+        <h2>{{ photos[currentIndex].user.name }}</h2>
+        <p>{{ photos[currentIndex].user.location }}</p>
       </div>
     </div>
+
+    <button class="close-button" @click="emit('close')">&times;</button>
+    <button
+      class="nav-button prev"
+      @click="previousImage"
+      :disabled="currentIndex === 0">
+      &#10094;
+    </button>
+    <button
+      class="nav-button next"
+      @click="nextImage"
+      :disabled="currentIndex === photos.length - 1">
+      &#10095;
+    </button>
   </div>
 </template>
 
@@ -37,7 +37,7 @@ import type { UnsplashPhoto } from '~/types'
 
 const props = defineProps<{
   show: boolean
-  photo: UnsplashPhoto
+  activePhoto: UnsplashPhoto
   photos: UnsplashPhoto[]
 }>()
 
@@ -45,7 +45,9 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const currentIndex = ref(props.photos.findIndex((p) => p.id === props.photo.id))
+const currentIndex = ref(
+  props.photos.findIndex((p) => p.id === props.activePhoto.id)
+)
 const modalRef = ref<HTMLElement | null>(null)
 const imageContainerRef = ref<HTMLElement | null>(null)
 
@@ -114,41 +116,33 @@ onBeforeUnmount(() => {
 
 .modal-content {
   position: relative;
-  width: 90%;
-  height: 90%;
-  max-width: 1200px;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
+  max-width: 90%;
+  max-height: 90%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
 .image-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  /* justify-content: center; */
-  max-width: 50vw;
-  margin: 0 auto;
-  background-color: white;
-  border-radius: 12px;
-
-  @media (max-width: 768px) {
-    max-width: 90%;
-  }
-
   img {
-    border-radius: 12px 12px 0 0;
-    max-height: 80%;
-    width: 100%;
+    max-height: 80vh;
     max-width: 100%;
-    object-fit: contain;
   }
 }
 
 .image-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 2rem;
   color: #000;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .close-button {
@@ -170,7 +164,7 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
-  padding: 16px;
+  padding: 8px 16px;
   cursor: pointer;
   font-size: 24px;
   border-radius: 50%;

@@ -25,7 +25,7 @@
     <ImageModal
       v-if="photos && selectedPhoto"
       :show="showModal"
-      :photo="selectedPhoto"
+      :active-photo="selectedPhoto"
       :photos="photos"
       @close="closeModal" />
   </div>
@@ -56,12 +56,10 @@ const closeModal = () => {
 </script>
 
 <style scoped lang="scss">
-$grid-gap: 36px;
-
 .image-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: $grid-gap;
+  gap: 2.5rem;
   grid-auto-flow: dense;
 
   @media (max-width: 768px) {

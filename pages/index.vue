@@ -187,6 +187,10 @@ header {
   align-items: center;
   justify-content: space-between;
 
+  @media (max-width: 768px) {
+    padding-inline: 0.5rem;
+  }
+
   p {
     font-size: 50px;
     color: #0a3e73;
@@ -194,6 +198,10 @@ header {
     span {
       color: #6b7280;
       font-weight: normal;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 30px;
     }
   }
 
