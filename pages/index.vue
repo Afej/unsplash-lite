@@ -6,7 +6,6 @@
           <input
             type="text"
             v-model.trim="searchQuery"
-            @keyup.enter="handleSearch"
             placeholder="Search for photos"
             class="search-input" />
 
@@ -48,7 +47,11 @@
     </header>
 
     <main class="wrapper">
-      <ImageGrid :photos="photos" :loading="isLoading" />
+      <ImageGrid v-if="!fetchError" :photos="photos" :loading="isLoading" />
+
+      <div v-if="fetchError" class="error-message">
+        {{ fetchError }}
+      </div>
     </main>
   </div>
 </template>
@@ -62,6 +65,7 @@ const searchQuery = ref('')
 const isLoading = ref(false)
 const isSearching = ref(false)
 const hasSearchResults = ref(false)
+const fetchError = ref<string | null>(null)
 
 const searchState = computed(() => isSearching.value || hasSearchResults.value)
 
@@ -71,15 +75,22 @@ const fetchPhotos = async (query?: string) => {
   try {
     photos.value = await getRandomPhotos({ query })
   } catch (error) {
-    console.error('Error fetching photos:', error)
+    fetchError.value = getErrorMessage(error, 'Failed to load photos.')
+    // console.error('Error fetching photos:', error)
   } finally {
     isLoading.value = false
   }
 }
 
+watch(searchQuery, () => {
+  if (searchQuery.value) {
+    debouncedSearch()
+  }
+})
+
 const debouncedSearch = useDebounceFn(() => {
   handleSearch()
-}, 1000)
+}, 500)
 
 const handleSearch = async () => {
   if (searchQuery.value) {
@@ -93,14 +104,9 @@ const clearSearch = () => {
   searchQuery.value = ''
   isSearching.value = false
   hasSearchResults.value = false
+  fetchError.value = null
   fetchPhotos()
 }
-
-watch(searchQuery, () => {
-  if (searchQuery.value) {
-    debouncedSearch()
-  }
-})
 
 onMounted(() => {
   fetchPhotos()
@@ -227,5 +233,15 @@ main.wrapper {
   @media (max-width: 768px) {
     max-width: 100%;
   }
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #ef4444;
+  font-size: 1.2rem;
+  background: #fee2e2;
+  border-radius: 8px;
+  margin: 2rem 0;
 }
 </style>
