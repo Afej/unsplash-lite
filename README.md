@@ -1,23 +1,51 @@
-# Nuxt Minimal Starter
+# Unsplash Lite (Cowrywise)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A lightweight Unsplash-inspired photo gallery application built with Nuxt 3. Browse, search and view high-quality photos.
+
+## Features
+
+- Browse curated photo collections
+- Search photos by keywords
+- Responsive image grid layout
+- Photo detail view with photographer info
+- Fast and lightweight experience
+- Image slider modal for photo details
+
+## Tech Stack
+
+- Nuxt 3
+- Vue 3
+- Tailwind CSS
+- Unsplash API
+
+## Prerequisites
+
+- Node.js 16.x or later
+- NPM or other package manager
 
 ## Setup
 
-Make sure to install dependencies:
+1. Clone the repository:
 
 ```bash
-# npm
-npm install
+git clone https://github.com/afej/unsplash-lite.git
+cd unsplash-lite
+```
 
-# pnpm
-pnpm install
+2. Install dependencies
 
-# yarn
+```bash
+#yarn
 yarn install
 
-# bun
-bun install
+#npm
+npm install
+```
+
+3. Create .env file and add your Unsplash API credentials
+
+```bash
+NUXT_PUBLIC_UNSPLASH_ACCESS_KEY=your_access_key_here
 ```
 
 ## Development Server
