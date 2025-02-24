@@ -11,8 +11,13 @@
         v-for="photo in photos"
         :key="photo.id"
         class="image-item"
+        :style="{ gridRow: `span ${getSpan(photo.id)}` }"
         @click="openModal(photo)">
-        <img :src="photo.urls.regular" :alt="photo.user.name" loading="lazy" />
+        <img
+          :src="photo.urls.regular"
+          :alt="photo.user.name"
+          loading="lazy"
+          @load="calculateSpan($event, photo.id)" />
         <div class="image-overlay">
           <div class="image-info">
             <h3>{{ photo.user.name }}</h3>
@@ -22,12 +27,14 @@
       </div>
     </template>
 
-    <ImageModal
-      v-if="photos && selectedPhoto"
-      :show="showModal"
-      :active-photo="selectedPhoto"
-      :photos="photos"
-      @close="closeModal" />
+    <Transition name="modal-fade">
+      <ImageModal
+        v-if="photos && selectedPhoto"
+        :show="showModal"
+        :active-photo="selectedPhoto"
+        :photos="photos"
+        @close="closeModal" />
+    </Transition>
   </div>
 </template>
 
@@ -40,6 +47,19 @@ const props = defineProps<{
 }>()
 
 const selectedPhoto = ref<UnsplashPhoto | null>(null)
+const imageSpans = ref(new Map())
+
+const calculateSpan = (event: Event, photoId: string) => {
+  const img = event.target as HTMLImageElement
+  const aspectRatio = img.naturalHeight / img.naturalWidth
+  const span = aspectRatio > 1.2 ? 2 : 1
+  imageSpans.value.set(photoId, span)
+}
+
+const getSpan = (photoId: string) => {
+  return imageSpans.value.get(photoId) || 1
+}
+
 const showModal = ref(false)
 
 const openModal = (photo: UnsplashPhoto) => {
@@ -60,7 +80,10 @@ const closeModal = () => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
-  grid-auto-flow: dense;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -69,7 +92,7 @@ const closeModal = () => {
 
 .image-item {
   position: relative;
-  aspect-ratio: 3/4;
+  /* aspect-ratio: 3/4; */
   cursor: pointer;
   overflow: hidden;
   border-radius: 8px;
@@ -133,5 +156,20 @@ const closeModal = () => {
   100% {
     background-position: 200% 0;
   }
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-to,
+.modal-fade-leave-from {
+  opacity: 1;
 }
 </style>
