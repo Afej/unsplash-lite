@@ -85,10 +85,12 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
+  document.body.style.overflow = 'hidden'
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleKeydown)
+  document.body.style.overflow = 'auto'
 })
 </script>
 

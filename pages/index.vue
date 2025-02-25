@@ -6,6 +6,7 @@
           <input
             type="text"
             v-model.trim="searchQuery"
+            @keyup.enter="handleSearch"
             placeholder="Search for photos"
             class="search-input" />
 
@@ -88,10 +89,6 @@ watch(searchQuery, () => {
   }
 })
 
-const debouncedSearch = useDebounceFn(() => {
-  handleSearch()
-}, 500)
-
 const handleSearch = async () => {
   if (searchQuery.value) {
     isSearching.value = true
@@ -99,6 +96,10 @@ const handleSearch = async () => {
     hasSearchResults.value = true
   }
 }
+
+const debouncedSearch = useDebounceFn(() => {
+  handleSearch()
+}, 3000)
 
 const clearSearch = () => {
   searchQuery.value = ''
